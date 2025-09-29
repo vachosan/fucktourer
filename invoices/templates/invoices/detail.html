@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Faktura {{ object.number }}</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { font-size: 24px; margin-bottom: 10px; }
+        .header, .footer { display: flex; justify-content: space-between; }
+        .section { margin-top: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f5f5f5; }
+        .right { text-align: right; }
+        .total { font-weight: bold; font-size: 16px; }
+    </style>
+</head>
+<body>
+
+    <div class="header">
+        <div>
+            <h1>Faktura č. {{ object.number }}</h1>
+            <p><strong>Vystaveno:</strong> {{ object.issue_date }}</p>
+            <p><strong>Splatnost:</strong> {{ object.due_date }}</p>
+            <p><strong>Stav:</strong> {{ object.get_status_display }}</p>
+        </div>
+        <div>
+            {% if object.client %}
+            <p><strong>Odběratel:</strong></p>
+            <p>{{ object.client.name }}</p>
+            <p>{{ object.client.address }}</p>
+            <p>{{ object.client.city }} {{ object.client.zip_code }}</p>
+            <p>{{ object.client.country }}</p>
+            <p>IČO: {{ object.client.ico }}</p>
+            <p>DIČ: {{ object.client.dic }}</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="section">
+        <table>
+            <thead>
+                <tr>
+                    <th>Popis</th>
+                    <th>Množství</th>
+                    <th>Jednotka</th>
+                    <th>Cena / ks</th>
+                    <th>Celkem</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in object.items.all %}
+                <tr>
+                    <td>{{ item.description }}</td>
+                    <td class="right">{{ item.quantity }}</td>
+                    <td>{{ item.unit }}</td>
+                    <td class="right">{{ item.unit_price }} Kč</td>
+                    <td class="right">{{ item.total }} Kč</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
+    <div class="section" style="width: 300px; margin-left: auto;">
+        <table>
+            <tr>
+                <td>Mezisoučet:</td>
+                <td class="right">{{ object.subtotal }} Kč</td>
+            </tr>
+            <tr>
+                <td>DPH ({{ object.vat_rate }} %):</td>
+                <td class="right">{{ object.vat_amount }} Kč</td>
+            </tr>
+            <tr class="total">
+                <td>Celkem k úhradě:</td>
+                <td class="right">{{ object.total }} Kč</td>
+            </tr>
+        </table>
+    </div>
+
+    <div class="footer">
+        <div>
+            <p><strong>Poznámka:</strong></p>
+            <p>{{ object.note }}</p>
+        </div>
+        <div>
+            <p><strong>Bankovní účet:</strong> {{ object.bank_account }}</p>
+            <p><strong>Variabilní symbol:</strong> {{ object.variable_symbol }}</p>
+        </div>
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Seznam faktur</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        h1 { font-size: 24px; margin-bottom: 20px; }
+        table { width: 100%; border-collapse: collapse; margin-top: 20px; }
+        th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+        th { background: #f5f5f5; }
+        .right { text-align: right; }
+        a { text-decoration: none; color: #0077cc; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <h1>Faktury</h1>
+<p><a href="{% url 'invoices:create' %}">+ Nová faktura</a></p>
+    <table>
+        <thead>
+            <tr>
+                <th>Číslo</th>
+                <th>Odběratel</th>
+                <th>Datum vystavení</th>
+                <th>Splatnost</th>
+                <th>Stav</th>
+                <th class="right">Celkem</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for invoice in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'invoices:detail' invoice.pk %}">
+                        {{ invoice.number }}
+                    </a>
+                </td>
+                <td>{{ invoice.client.name }}</td>
+                <td>{{ invoice.issue_date }}</td>
+                <td>{{ invoice.due_date }}</td>
+                <td>{{ invoice.get_status_display }}</td>
+                <td class="right">{{ invoice.total }} Kč</td>
+            </tr>
+            {% empty %}
+            <tr>
+                <td colspan="6">Žádné faktury zatím nejsou.</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+</body>
+</html>
